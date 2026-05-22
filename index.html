@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Learning Path — NVIDIA Academy</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --green: #76b900;
+    --green-dark: #5a9200;
+    --green-light: #f0f7e0;
+    --black: #1a1a1a;
+    --gray-900: #222;
+    --gray-700: #444;
+    --gray-500: #777;
+    --gray-200: #e0e0dc;
+    --gray-100: #f4f4f0;
+    --white: #fff;
+    --sidebar-w: 200px;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    --mono: 'SFMono-Regular', Consolas, monospace;
+  }
+
+  html { font-size: 15px; }
+  body {
+    font-family: var(--font);
+    color: var(--gray-900);
+    background: var(--white);
+    line-height: 1.6;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .top-nav {
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    padding: 0 24px;
+    height: 48px;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 200;
+  }
+  .nv-wordmark {
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--green);
+    flex-shrink: 0;
+  }
+  .nv-divider { width: 1px; height: 20px; background: #444; }
+  .nv-section { font-size: 12px; color: #aaa; letter-spacing: 0.5px; }
+
+  .layout {
+    display: flex;
+    flex: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 0 24px;
+    gap: 40px;
+  }
+
+  .sidebar {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    padding: 32px 0;
+    position: sticky;
+    top: 48px;
+    height: calc(100vh - 48px);
+    overflow-y: auto;
+  }
+  .sidebar-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+    padding-left: 2px;
+  }
+  .sidebar nav { display: flex; flex-direction: column; gap: 2px; }
+  .track-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    background: transparent;
+    font-size: 13px;
+    font-family: var(--font);
+    color: var(--gray-700);
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .track-btn:hover { background: var(--gray-100); color: var(--black); }
+  .track-btn.active {
+    background: var(--green-light);
+    color: var(--green-dark);
+    font-weight: 600;
+  }
+
+  .main {
+    flex: 1;
+    padding: 32px 0 64px;
+    min-width: 0;
+  }
+
+  .page-header { margin-bottom: 28px; }
+  .page-header h1 {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--black);
+    margin-bottom: 4px;
+  }
+  .page-header .subtitle {
+    font-size: 13px;
+    color: var(--gray-500);
+    font-weight: 500;
+    margin-bottom: 12px;
+  }
+  .page-header .intro {
+    font-size: 13.5px;
+    color: var(--gray-700);
+    line-height: 1.65;
+    border-left: 3px solid var(--green);
+    padding-left: 14px;
+    margin-top: 12px;
+    max-width: 680px;
+  }
+
+  .track-panel { display: none; }
+  .track-panel.active { display: block; }
+
+  .chapter { margin-bottom: 36px; }
+  .chapter-header {
+    display: flex;
+    align-items: baseline;
+    gap: 14px;
+    margin-bottom: 14px;
+    padding-bottom: 10px;
+    border-bottom: 1.5px solid var(--gray-200);
+  }
+  .chapter-num {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--green);
+    background: var(--green-light);
+    border: 1px solid #c5e08a;
+    padding: 2px 9px;
+    border-radius: 12px;
+    letter-spacing: 0.5px;
+    flex-shrink: 0;
+  }
+  .chapter-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+  }
+
+  .course {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 8px 20px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--gray-200);
+  }
+  .course:last-child { border-bottom: none; }
+  .course-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--black);
+    margin-bottom: 5px;
+    line-height: 1.4;
+  }
+  .course-desc {
+    font-size: 13px;
+    color: var(--gray-700);
+    line-height: 1.6;
+    max-width: 600px;
+  }
+  .course-desc strong { color: var(--black); }
+  .course-desc .prereq {
+    display: block;
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--gray-500);
+    font-style: italic;
+  }
+  .course-meta {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 5px;
+    flex-shrink: 0;
+    padding-top: 2px;
+  }
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    padding: 3px 9px;
+    border-radius: 10px;
+    white-space: nowrap;
+  }
+  .badge-self     { background: #e8f4ff; color: #1a5fa0; border: 1px solid #b8d8f8; }
+  .badge-workshop { background: #fff3e0; color: #a05000; border: 1px solid #f0c878; }
+  .badge-exam     { background: #f3eefe; color: #5b3fa0; border: 1px solid #cdb8f0; }
+  .badge-ext      { background: var(--green-light); color: var(--green-dark); border: 1px solid #c5e08a; }
+  .duration {
+    font-size: 12px;
+    color: var(--gray-500);
+    font-variant-numeric: tabular-nums;
+  }
+  .coming-soon {
+    font-size: 11px;
+    color: var(--gray-500);
+    font-style: italic;
+  }
+
+  footer {
+    background: var(--gray-100);
+    border-top: 1px solid var(--gray-200);
+    padding: 16px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .footer-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--green-dark);
+    letter-spacing: 0.5px;
+  }
+  .footer-updated {
+    font-size: 11px;
+    color: var(--gray-500);
+    font-family: var(--mono);
+  }
+
+  @media (max-width: 680px) {
+    .sidebar { display: none; }
+    .layout { padding: 0 16px; }
+    .course { grid-template-columns: 1fr; }
+    .course-meta { flex-direction: row; align-items: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <span class="nv-wordmark">NVIDIA</span>
+  <div class="nv-divider"></div>
+  /*<span class="nv-section">Academy</span>*/
+</nav>
+
+<div class="layout">
+  <aside class="sidebar">
+    <div class="sidebar-label">Learning Paths</div>
+    <nav id="trackNav"></nav>
+  </aside>
+
+  <main class="main">
+    <div class="page-header">
+      <h1 id="pageTitle"></h1>
+      <div class="subtitle" id="pageSubtitle"></div>
+      <p class="intro" id="pageIntro"></p>
+    </div>
+    <div id="trackPanels"></div>
+  </main>
+</div>
+
+<footer>
+  <span class="footer-label" id="footerLabel"><a  href="https://www.nvidia.com/en-us/training/academy/learning-path-detail/?id=learningProgram%3A166349" target="_blank" style="color: #76b900;" style="text-decoration: none;" >ACADEMY.NVIDIA.COM</a></span>
+  <span class="footer-updated" id="footerDate"></span>
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════════════════
+   CONTENT — edit PAGE and TRACKS below
+   ═══════════════════════════════════════════════════════ */
+
+const PAGE = {
+  title: "NVIDIA AI Data Platform (AIDP) Deployment Training",
+  subtitle: "Preliminary Outline and Content Availability by Track",
+  intro: "This page provides a high-level overview of the program structure and content for each track. It is not a course catalog — detailed course descriptions, objectives, and enrollment information are available within the learning platform. Use the menu on the left to navigate between tracks.",
+  lastUpdated: "2026-05-22"
+};
+
+/* Badge types: "self" | "workshop" | "exam" | "ext" */
+
+const TRACKS = [
+  {
+    id: "track-fundamentals",
+    label: "Foundational Knowledge",
+    chapters: [
+      {
+        num: 1,
+        title: "AI for All: From Basics to GenAI Practice",
+        courses: [
+          {
+            title: "",
+            desc: "This introductory course provides invaluable insights into the evolving landscape of AI. Whether you're a seasoned professional or just beginning your journey into AI, this course is essential for staying ahead in today's rapidly evolving technological landscape. <br><a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15139849' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" , 
+            type: "self",
+            duration: "3 hours 19 minutes"
+          }
+        ]
+      },
+      {
+        num: 2,
+        title: "Generative AI Explained",
+        courses: [
+          {
+            title:"",
+            desc: "Generative AI describes technologies that are used to generate new content based on a variety of inputs. In recent time, Generative AI involves the use of neural networks to identify patterns and structures within existing data to generate new content. In this course, you will learn Generative AI concepts, applications, as well as the challenges and opportunities in this exciting field.<br><a href='https://learn.nvidia.com/courses/course-detail?course_id=course-v1%3ADLI+S-FX-07+V1' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" , 
+            type: "ext",
+            duration: "2 hours",
+            note: ""
+          },
+         /* {
+            title: "Another Course Title",
+            desc: "Add course description here.",
+            type: "ext",
+            duration: "X hours"
+          }*/
+        ]
+      },
+      {
+        num: 3,
+        title: "Augment your LLM Using Retrieval Augmented Generation",
+        courses: [
+          {
+            title: "",
+            desc: "Retrieval Augmented Generation (RAG) - Introduced by Facebook AI Research in 2020, is an architecture used to optimize the output of an LLM with dynamic, domain specific data without the need of retraining the model. RAG is an end-to-end architecture that combines an information retrieval component with a response generator. In this introduction we provide a starting point using components we at NVIDIA have used internally. This workflow will jumpstart you on your LLM and RAG journey.<br><a href='https://learn.nvidia.com/courses/course-detail?course_id=course-v1%3ADLI+S-FX-16+V1' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" ,
+            type: "ext",
+            duration: "1 hour",
+           // prereq: "PREREQUISITE: Course Name (self-paced)"
+          }
+        ]
+      },
+      {
+        num: 4,
+        title: "Introduction to NVIDIA NIM™ Microservices",
+        courses: [
+          {
+            title: "",
+            desc: "NVIDIA NIM™ is a set of easy-to-use microservices designed for secure, reliable deployment of high performance AI model inferencing across the cloud, data center and workstations. It is designed to speed up AI deployment in enterprises, supporting various optimized community AI models. This Deep Learning Institute (DLI) course covers important concepts to help developers understand how NIM enables the building, deploying, and scaling of AI applications.<br><a href='https://learn.nvidia.com/courses/course-detail?course_id=course-v1%3ADLI+S-FX-23+V1' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" ,
+            type: "ext",
+            duration: "2 hours"
+          }
+        ]
+      },
+      {
+        num: 5,
+        title: "NVIDIA License System (NLS)",
+        courses: [
+          {
+            title: "",
+            desc: "The NVIDIA License System (NLS) is the enterprise licensing solution supporting NVIDIA's software portfolio, including vGPU, AI Enterprise, and other licensed products. This course covers the two service instance types—Cloud License Service (CLS) for cloud-managed licensing and Delegated License Service (DLS) for on-premises deployments—providing the skills to ensure flexibility, scalability, and advanced license management.<br><a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15139978' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" ,
+            type: "self" | "ext",
+            duration: "3 hours 14 minutes"
+          }
+        ]
+      },
+      {
+        num: 6,
+        title: "AI Infrastructure and Operations Fundamentals",
+        courses: [
+          {
+            title: "",
+            desc: "Designed for enterprise professionals, this course provides invaluable insights into the ever-changing realm of AI. Whether you're a seasoned professional or just beginning your journey into AI, this course is essential for staying ahead in today's rapidly evolving technological landscape.<br><a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15139841' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" ,
+            type: "self",
+            duration: "7 hours 25 minutes"
+          }
+        ]
+      },
+      {
+        num: 7,
+        title: "NVIDIA AI Enterprise Deployment on BareMetal Kubernetes",
+        courses: [
+          {
+            title: "",
+            desc: "This course provides a comprehensive, hands-on experience designed to equip BareMetal IT professionals with the skills needed to deploy, manage, and validate AI workloads in production environments using the NVIDIA AI Enterprise solution. The training follows a scenario-based approach, starting with Kubernetes deployment on BareMetal infrastructure, followed by NVIDIA AI Enterprise implementation, and concluding with the deployment of a standard Retrieval-Augmented Generation (RAG) use case.<br><a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15140020' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" ,
+            type: "self",
+            duration: "3 hours 2 minutes"
+            
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "track-Learning Tracks",
+    label: "Learning Tracks",
+    chapters: [
+      {
+        num: 1,
+        title: "NVIDIA AI Data Platform (AIDP) Deployment Training: Compute Track",
+        courses: [
+          {
+            title: "Run:ai Platform Deployment",
+            desc: "The Run:ai Platform Deployment course provides a practical, end-to-end introduction to deploying and configuring the Run:ai platform. This course covers both conceptual understanding and hands-on guidance for installing, configuring, and verifying Run:ai deployments.<br><a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15853437' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" ,
+            type: "self",
+            duration: "3 hours 8 minutes"
+          },
+            {
+            title: "Run:ai for AI Practioners Public",
+            desc: "In this course, you will learn the basics of NVIDIA Run:ai and how to create AI workloads. Designed for AI practitioners, this course guides you through the practical steps of creating, deploying, and monitoring interactive, inference, and training workloads using NVIDIA Run:ai. <br><a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15932192' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" ,
+            type: "workshop",
+            duration: "2 sessions"
+          }
+        ]
+      },
+      {
+        num: 2,
+        title: "NVIDIA AI Data Platform (AIDP) Deployment Training: Networking Track",
+        courses: [
+          {
+            title: "RDMA over Converged Ethernet (RoCE) from A to Z",
+            desc: "This course provides a comprehensive guide to deploying and managing RoCE using NVIDIA Mellanox solutions. Participants will explore the evolution of RoCE from its InfiniBand origins to its modern application on both Lossless and Lossy fabrics. Through technical demonstrations and configuration walkthroughs, learners will master the setup of Mellanox ConnectX® adapters, BlueField® DPUs, and Spectrum® switches to ensure optimal network performance and stability.<br><a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15139819' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" ,
+            type: "self",
+            duration: "30 minutes"
+          },
+               {
+            title: "The Fundamentals of RDMA Programming",
+            desc: "Master the architecture of high-speed networking with this comprehensive guide to RDMA. Designed for developers and performance engineers, this course focuses on implementing Kernel Bypass and Zero-Copy networking to eliminate CPU strain and minimize latency. You will gain the critical skills required to architect and maintain the backbone of today’s most demanding systems, including HPC supercomputers, distributed AI training clusters, and flash-based storage arrays.<br><a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15139820' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" , 
+            type: "self",
+            duration: "5 hours 6 minutes"
+          },
+               {
+            title: "Spectrum-X Networking Platform Administration Private Workshop",
+            desc: "NVIDIA Spectrum™ -X networking platform enhances network performance by 1.6X, accelerating the processing, analysis, and execution of AI workloads and, in turn, the development and deployment of AI solutions. In this course, participants will gain essential skills to deploy and manage AI clusters using the NVIDIA Spectrum-X networking platform. Through instructor-led sessions and hands-on labs in the NVIDIA Air environment, participants will learn to provision and manage AI clusters.  Key topics include advanced networking for AI, Spectrum-X deployment, and real-time network monitoring using NetQ and Cumulus Linux. <br><a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15853438' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" ,
+            type: "workshop",
+            duration: "3 sessions"
+          },
+               {
+            title: "Data Center Management Made Easy with NVIDIA UFM",
+            desc: "This course equips network IT teams and system professionals , with the practical skills needed to, operate, and manage and maintain InfiniBand Fabric nodes in the data center Using the UFM as a pivot tool.<br><a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15139829' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" ,
+            type: "self",
+            duration: "2 hours 29 minutes"
+          },
+            {
+            title: "BlueField DPU Administration",
+            desc: "In this self-paced course, you will learn the basic concepts of BlueField DPUs as a platform for accelerated data center computing. Upon completion, you will be equipped with a set of introductory knowledge and skills that will enable you to bring-up the BlueField DPUs and begin using them to develop applications that accelerate your data centers services. <br><a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15139834' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" ,
+            type: "self",
+            duration: "4 hours 10 minutes"
+          },
+           {
+            title: "NetQ Deployment and Installation",
+            desc: "This course guides you through the complete NetQ lifecycle—from initial concepts and installation management to post-deployment operations. You will learn how to leverage NetQ’s advanced telemetry, topology insights, and proactive alerts to monitor network health, validate configurations, and quickly troubleshoot issues that impact AI workload performance.<br><a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15853441' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" ,
+            type: "self",
+            duration: "1 hour 44 minutes"
+          },
+           {
+            title: "Cable Validation Tool (CVT) Fundamentals",
+            desc: "The Cable Validation Tool (CVT) is NVIDIA's enterprise solution for validating data center cabling infrastructure across InfiniBand and Ethernet fabrics. CVT empowers field teams, network engineers, and project managers with real-time physical layer validation, automated reporting, and guided remediation — reducing costly bring-up delays and troubleshooting time during data center deployments.<br><a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15853439' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" ,
+            type: "self",
+            duration: "2 hours 7 minutes"
+          },
+          {
+            title: "MLXLink and MLXCables",
+            desc: "This course equips IT professionals with the essential skills to troubleshoot and analyze physical link characteristics in high-performance networks. Moving beyond basic connectivity checks, you will learn to utilize the MLXlink and MLXcables utilities to perform deep-level diagnostics, query cable data, and ensure optimal network health.<br><a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15139833' target='_blank' style='color: #76b900;'>Learn more about this course.</a>" ,
+            type: "self",
+            duration: "1 hour 44 minutes"
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "track-advanced",
+    label: "Host-Platform Readiness",
+    chapters: [
+      {
+        num: 1,
+        title: "Host-Readiness Platform: AI Factory Deployment Training: Compute Track",
+        courses: [
+          {
+            title: "",
+            desc: "This track will leverage the Compute Track for AI Factory Deployment Training. AIDP needs a healthy, AI-ready substrate before the AIDP-specific software stack will install cleanly. Rather than re-teach what AI Factory Deployment and NCP Administration already cover well, this module is a one-page readiness matrix. Link to the AI Factory Deployment compute learning track. <br> <a href='https://www.nvidia.com/en-us/training/academy/learning-path-detail/?id=learningProgram%3A164253' target='_blank' style='color: #76b900;'>Learn more.</a> ",
+            type: "self",
+      
+            
+          }
+        ]
+      }
+    ]
+  },
+  {
+    id: "track-certification",
+    label: "Workshops & Certifications",
+    chapters: [
+      {
+        num: 1,
+        title: "Recommended Capstone Workshops",
+        courses: [
+          {
+            title: "NVIDIA AI Enterprise Deployment on BareMetal Kubernetes",
+            desc: "This course provides a comprehensive, hands-on experience designed to equip BareMetal IT professionals with the skills needed to deploy, manage, and validate AI workloads in production environments using the NVIDIA AI Enterprise solution. The training follows a scenario-based approach, starting with Kubernetes deployment on BareMetal infrastructure, followed by NVIDIA AI Enterprise implementation, and concluding with the deployment of a standard Retrieval-Augmented Generation (RAG) use case. <br> <a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15140020' target='_blank' style='color: #76b900;'>Learn more.</a> ",
+            type: "workshop",
+            duration: "3 hours 2 minutes",
+            note: "Optional — not required to complete the learning path."
+          },
+           {
+            title: "AI Operations Professional Public Workshop",
+            desc: "This course provides system administrators and data center professionals with the practical skills required to deploy, operate, and manage modern AI infrastructure.You will learn how to provision and maintain critical compute platforms, including GPUs and BlueField DPUs, and gain expertise in orchestrating workloads using industry standards like Kubernetes and Slurm. This course combines foundational architecture knowledge with hands-on exercises in storage configuration, Base Command Manager (BCM) administration, and Multi-Instance GPU (MIG) virtualization. By the end of the training, participants will be empowered to effectively manage AI data centers, ensuring optimal performance and uninterrupted operation of AI applications.<br> <a href='https://www.nvidia.com/en-us/training/academy/course-detail/?id=course%3A15932194' target='_blank' style='color: #76b900;'>Learn more.</a> ",
+            type: "workshop",
+            duration: "10 minutes",
+            note: "Optional — not required to complete the learning path."
+          }
+        ]
+      },
+      {
+        num: 2,
+        title: "Recommended Certifications",
+        courses: [
+          {
+            title: "NVIDIA-Certified Associate: AI Infrastructure and Operations ",
+            desc: "The NCA-AIIO certification is an entry-level credential that validates the foundational concepts of AI computing related to infrastructure and operations. The exam is online and proctored remotely, includes 50 questions, and has a 60-minute time limit. <br> <a href='https://www.nvidia.com/en-us/learn/certification/ai-infrastructure-operations-associate/' target='_blank' style='color: #76b900;'>Learn more.</a> ",
+            type: "exam",
+            duration: "1 hour",
+            note: "Level: Associate"
+          },
+           {
+            title: "NVIDIA Certified Professional: AI Infrastructure ",
+            desc: "The NCP-AI Infrastructure certification is an intermediate-level credential that validates a candidate’s ability to deploy, configure, and validate advanced NVIDIA AI infrastructure. The exam is online and proctored remotely, includes approximately 70 questions, and has a 120-minute time limit.<br> <a href='https://www.nvidia.com/en-us/learn/certification/ai-infrastructure-professional/' target='_blank' style='color: #76b900;'>Learn more.</a> ",
+            type: "exam",
+            duration: "2 hours",
+            note: "Level: Professional"
+          },
+           {
+            title: "NVIDIA Certified Professional: AI Operations  ",
+            desc: "The NCP-AI Operations certification is an intermediate-level credential that validates a candidate’s ability to monitor, troubleshoot, and optimize AI infrastructure by NVIDIA. The exam is online and proctored remotely, includes 30 multiple choice questions, 3 hands-on lab exercises, and has a 120-minute time limit.<br> <a href='https://www.nvidia.com/en-us/learn/certification/ai-operations-professional/' target='_blank' style='color: #76b900;'>Learn more.</a> ",
+            type: "exam",
+            duration: "2 hours",
+            note: "Level: Professional"
+          },
+           {
+            title: "NVIDIA Certified Professional: AI Networking ",
+            desc: "The NCP-AI Networking certification is an intermediate-level credential that validates a candidate’s ability to deploy and configure environments that leverage NVIDIA’s advanced networking technologies. The exam is online and proctored remotely, includes 70 to 75 questions, and has a 120-minute time limit.<br> <a href='https://www.nvidia.com/en-us/learn/certification/ai-networking-professional/' target='_blank' style='color: #76b900;'>Learn more.</a> ",
+            type: "exam",
+            duration: "2 hours",
+            note: "Level: Professional"
+          },
+           {
+            title: "NVIDIA Certified Associate: Generative AI LLMs ",
+            desc: "The Generative AI LLMs professional certification is an intermediate-level credential that validates a candidate’s ability to design, train, and fine-tune cutting-edge LLMs, applying advanced distributed training techniques and optimization strategies to deliver high-performance AI solutions. The exam is online and proctored remotely, includes 60–70 questions, and has a 120-minute time limit.<br> <a href='https://www.nvidia.com/en-us/learn/certification/generative-ai-llm-professional/' target='_blank' style='color: #76b900;'>Learn more.</a> ",
+            type: "exam",
+            duration: "1 hour",
+            note: "Level: Associate"
+          },
+           {
+            title: "NVIDIA Certified Associate: Generative AI Multimodal",
+            desc: "The NCA Generative AI Multimodal certification is an entry-level credential that validates the foundational skills needed to design, implement, and manage AI systems that synthesize and interpret data across text, image, and audio modalities. The exam is online and proctored remotely, includes 50 questions, and has a 60-minute time limit.<br> <a href='https://www.nvidia.com/en-us/learn/certification/generative-ai-multimodal-associate/' target='_blank' style='color: #76b900;'>Learn more.</a> ",
+            type: "exam",
+            duration: "1 hour",
+            note: "Level: Associate"
+          },
+           {
+            title: "NVIDIA Certified Professional: Agentic AI",
+            desc: "The Agentic AI LLMs professional certification is an intermediate-level credential that validates a candidate’s ability to architect, develop, deploy, and govern advanced agentic AI solutions, with a focus on multi-agent interaction, distributed reasoning, scalability, and ethical safeguards. The exam is online and proctored remotely, includes 60–70 questions, and has a 120-minute time limit.<br> <a href='https://www.nvidia.com/en-us/learn/certification/agentic-ai-professional/' target='_blank' style='color: #76b900;'>Learn more.</a> ",
+            type: "exam",
+            duration: "2 hours",
+            note: "Level: Professional"
+          }
+        ]
+      }
+    ]
+  }
+];
+
+/* ═══════════════════════════════════════════════════════
+   RENDERER — no need to edit below
+   ═══════════════════════════════════════════════════════ */
+
+const BADGE_CLASS = { self:'badge-self', workshop:'badge-workshop', exam:'badge-exam', ext:'badge-ext' };
+const BADGE_LABEL = { self:'Self-Paced', workshop:'Workshop', exam:'Exam', ext:'External · DLI' };
+
+function renderCourse(c) {
+  const noteHtml   = c.note   ? `<br><strong>${c.note}</strong>` : '';
+  const prereqHtml = c.prereq ? `<span class="prereq">${c.prereq}</span>` : '';
+  const durHtml    = c.comingSoon
+    ? `<span class="coming-soon">${c.comingSoon}</span>`
+    : (c.duration ? `<span class="duration">${c.duration}</span>` : '');
+  return `
+    <div class="course">
+      <div>
+        <div class="course-title">${c.title}</div>
+        <div class="course-desc">${c.desc}${noteHtml}${prereqHtml}</div>
+      </div>
+      <div class="course-meta">
+        <span class="badge ${BADGE_CLASS[c.type]||'badge-self'}">${BADGE_LABEL[c.type]||'Self-Paced'}</span>
+        ${durHtml}
+      </div>
+    </div>`;
+}
+
+function renderChapter(ch) {
+  return `
+    <div class="chapter">
+      <div class="chapter-header">
+        <span class="chapter-num">${ch.num}</span>
+        <span class="chapter-title">${ch.title}</span>
+      </div>
+      ${ch.courses.map(renderCourse).join('')}
+    </div>`;
+}
+
+function renderTrack(track, active) {
+  return `
+    <div class="track-panel${active?' active':''}" id="${track.id}">
+      ${track.chapters.map(renderChapter).join('')}
+    </div>`;
+}
+
+function switchTrack(id) {
+  document.querySelectorAll('.track-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.track-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelector(`[data-track="${id}"]`).classList.add('active');
+}
+
+document.getElementById('pageTitle').textContent   = PAGE.title;
+document.getElementById('pageSubtitle').textContent = PAGE.subtitle;
+document.getElementById('pageIntro').textContent    = PAGE.intro;
+document.getElementById('footerDate').textContent   = 'LAST UPDATED ' + PAGE.lastUpdated;
+
+document.getElementById('trackNav').innerHTML = TRACKS.map((t,i) =>
+  `<button class="track-btn${i===0?' active':''}" data-track="${t.id}" onclick="switchTrack('${t.id}')">${t.label}</button>`
+).join('');
+
+document.getElementById('trackPanels').innerHTML = TRACKS.map((t,i) => renderTrack(t,i===0)).join('');
+</script>
+</body>
+</html>
